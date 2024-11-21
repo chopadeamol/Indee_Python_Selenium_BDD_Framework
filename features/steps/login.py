@@ -4,24 +4,25 @@ from behave import given
 from behave import when
 from behave import then
 from selenium import webdriver
+from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
-
+from selenium.webdriver.common.by import By
 from features.pages.loginPage import LoginPage
 from utils.readProperties import ReadConfig
 
 class Login:
     try:
-        print("===========Test Case Started============")
-        time_before = datetime.now().strftime("%Y%m%d%H%M%S")
-        print("===Test Initialisation time===:",time_before)
-
         @given('I got navigated to the Indee login page')
         def read_creds_and_navigate_to_url(context):
             options = Options()
             options.add_argument("--disable-blink-features=AutomationControlled")
             options.add_experimental_option("excludeSwitches", ["enable-automation"])
             options.add_experimental_option('useAutomationExtension', False)
-            # options.add_argument("--headless")
+            prefs = {
+                "credentials_enable_service": False,
+                "profile.password_manager_enabled": False
+                }
+            options.add_experimental_option("prefs", prefs)
             context.driver = webdriver.Chrome(options=options)
             context.lp = LoginPage(context.driver)
             context.baseURL = ReadConfig().getApplicationUrl()
@@ -59,6 +60,16 @@ class Login:
             context.lp.click_on_in_frame_play_button()
             # click again on in frame play button to resume playing
             context.lp.click_on_in_frame_play_button()
+            # click on volume button to mute it
+            context.lp.click_on_volume_button_to_mute()
+            # click on volume button again to unmute it
+            context.lp.click_on_volume_button_to_unmute()
+            # Set volume to 50 percent
+            context.lp.set_volume_50()
+            # set volume to 100 percent again
+            context.lp.set_volume_100()
+            # Set volume to 50 percent again
+            context.lp.set_volume_50()
             # click on setting button
             context.lp.click_on_in_frame_setting_button()
             # set the resolution to 480p
@@ -78,11 +89,6 @@ class Login:
             # click on sign out button to log off and exit
             context.lp.click_on_sign_out_button()
 
-        print("===========Test Case Finished============")
-        time_after = datetime.now().strftime("%Y%m%d%H%M%S")
-        print("===Test finished at===: ", time_after)
-        total_time_req = int(time_after) - int(time_before)
-        print("====Total time consumed to run test is====", total_time_req)
 
     except Exception as e:
         print("Occurred an Exception", e)

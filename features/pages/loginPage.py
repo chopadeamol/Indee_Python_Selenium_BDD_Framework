@@ -2,6 +2,7 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 
 class LoginPage:
     try:
@@ -17,12 +18,16 @@ class LoginPage:
         play_button_xpath = "(//*[local-name()='svg' and @aria-hidden='true'])[1]"
         iframe_xpath = "//iframe[@id='video_player']"
         in_iframe_play_button = "document.querySelector('#media-player > div.jw-wrapper.jw-reset > div.jw-controls.jw-reset > div.jw-controlbar.jw-reset > div.jw-reset.jw-button-container > div.jw-icon.jw-icon-inline.jw-button-color.jw-reset.jw-icon-playback').click()"
-        in_frame_volume_button = "document.querySelector('#media-player > div.jw-wrapper.jw-reset > div.jw-controls.jw-reset > div.jw-controlbar.jw-reset > div.jw-reset.jw-button-container > div.jw-icon.jw-icon-tooltip.jw-icon-volume.jw-button-color.jw-reset.jw-full > svg.jw-svg-icon.jw-svg-icon-volume-100')"
-        in_frame_volume_slider = "document.querySelector('#media-player > div.jw-wrapper.jw-reset > div.jw-controls.jw-reset > div.jw-controlbar.jw-reset > div.jw-reset.jw-button-container > div.jw-icon.jw-icon-tooltip.jw-icon-volume.jw-button-color.jw-reset.jw-full > div > div > div > div.jw-rail.jw-reset')"
+        # in_frame_volume_button = "document.querySelector('#media-player > div.jw-wrapper.jw-reset > div.jw-controls.jw-reset > div.jw-controlbar.jw-reset > div.jw-reset.jw-button-container > div.jw-icon.jw-icon-tooltip.jw-icon-volume.jw-button-color.jw-reset.jw-full > svg.jw-svg-icon.jw-svg-icon-volume-100')"
         in_frame_setting = "document.querySelector('#media-player > div.jw-wrapper.jw-reset > div.jw-controls.jw-reset > div.jw-controlbar.jw-reset > div.jw-reset.jw-button-container > div.jw-icon.jw-icon-inline.jw-button-color.jw-reset.jw-icon-settings.jw-settings-submenu-button').click()"
         in_frame_480p_xpath = "//button[contains(text(),'480p')]"
         in_frame_720_xpath = "//button[contains(text(),'720p')]"
         sign_out_button_xpath1 = "(//*[local-name()='svg' and @viewBox='0 0 32 32'])[4]"
+        volume_button_to_mute = "document.querySelector('#media-player > div.jw-wrapper.jw-reset > div.jw-controls.jw-reset > div.jw-controlbar.jw-reset > div.jw-reset.jw-button-container > div.jw-icon.jw-icon-tooltip.jw-icon-volume.jw-button-color.jw-reset.jw-full').click()"
+        volume_button_to_unmute = "document.querySelector('#media-player > div.jw-wrapper.jw-reset > div.jw-controls.jw-reset > div.jw-controlbar.jw-reset > div.jw-reset.jw-button-container > div.jw-icon.jw-icon-tooltip.jw-icon-volume.jw-button-color.jw-reset.jw-off').click()"
+        set_volume_css = "#media-player > div.jw-wrapper.jw-reset > div.jw-media.jw-reset > video"
+        argument_50 = "arguments[0].volume=0.5"
+        argument_100 = "arguments[0].volume=1.0"
 
 
         def enter_password(self, password):
@@ -112,5 +117,27 @@ class LoginPage:
             # signout = WebDriverWait(self.driver, 5).until(
             #     EC.presence_of_element_located((By.XPATH, self.sign_out_button_xpath1)))
             # signout.click()
+
+        def click_on_volume_button_to_mute(self):
+            # act = ActionChains(self.driver)
+            # ele = self.driver.find_element(By.XPATH,"//*[@id='media-player']/div[2]/div[13]/div[4]/div[2]/div[4]")
+            # act.move_to_element(ele)
+            self.driver.execute_script(self.volume_button_to_mute)
+            time.sleep(5)
+
+        def click_on_volume_button_to_unmute(self):
+            self.driver.execute_script(self.volume_button_to_unmute)
+            time.sleep(5)
+
+        def set_volume_50(self):
+            video = self.driver.find_element(By.CSS_SELECTOR,self.set_volume_css)
+            self.driver.execute_script(self.argument_50,video)
+            time.sleep(10)
+
+        def set_volume_100(self):
+            video = self.driver.find_element(By.CSS_SELECTOR,self.set_volume_css)
+            self.driver.execute_script(self.argument_100,video)
+            time.sleep(10)
+
     except Exception as e:
         print("Exception occurred:",e)
